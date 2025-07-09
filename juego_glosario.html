@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Juego Glosario ADSO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #f9f9f9;
+            text-align: center;
+            padding: 50px 20px;
+        }
+        .wheel-container {
+            margin: 0 auto 30px;
+            width: 300px;
+            height: 300px;
+            border: 10px solid #007bff;
+            border-radius: 50%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            background: #eee;
+            transform-origin: 100% 100%;
+            clip-path: polygon(0 0, 100% 0, 100% 100%);
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        .pointer {
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 30px solid red;
+            margin: 0 auto 20px;
+        }
+        .btn {
+            padding: 10px 25px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Juego Glosario ADSO</h1>
+    <p>Gira la ruleta y evalúa la pronunciación de la palabra seleccionada</p>
+
+    <div class="pointer"></div>
+    <div class="wheel-container" id="wheel"></div>
+    <button class="btn btn-primary" onclick="spinWheel()">🎡 Girar Ruleta</button>
+
+    <div class="result" id="resultText"></div>
+    <div id="actions" style="display: none;">
+        <button class="btn btn-success" onclick="markCorrect()">✅ Correcto</button>
+        <button class="btn btn-danger" onclick="markIncorrect()">❌ Incorrecto</button>
+        <p id="definition" class="mt-3"></p>
+    </div>
+
+    <script>
+        const words = [
+            { word: "Algorithm", definition: "A set of steps used to solve a problem." },
+            { word: "Backend", definition: "The part of a software system that handles logic and database." },
+            { word: "Class", definition: "A template for creating objects with attributes and methods." },
+            { word: "Database", definition: "A structured collection of data." },
+            { word: "Entity", definition: "A real-world object represented in a database." },
+            { word: "Framework", definition: "A collection of tools and libraries for development." },
+            { word: "Git", definition: "A version control system." },
+            { word: "HTML", definition: "Standard language to create web pages." },
+            { word: "Interface", definition: "A point of interaction between systems." },
+            { word: "JavaScript", definition: "A language used to create dynamic web pages." },
+            { word: "Keyword", definition: "Reserved words with special meaning in a language." },
+            { word: "Loop", definition: "A structure to repeat instructions in code." },
+            { word: "Model", definition: "A data or logic representation used in MVC." },
+            { word: "Node.js", definition: "Runtime environment for executing JS on the server." },
+            { word: "Object", definition: "A structure in OOP with properties and methods." }
+        ];
+
+        const wheel = document.getElementById("wheel");
+
+        function renderWheel() {
+            wheel.innerHTML = "";
+            const total = words.length;
+            const angle = 360 / total;
+            words.forEach((w, i) => {
+                const seg = document.createElement("div");
+                seg.className = "segment";
+                seg.style.transform = `rotate(${angle * i}deg) skewY(-${90 - angle}deg)`;
+                seg.style.backgroundColor = i % 2 === 0 ? "#cce5ff" : "#b3d7ff";
+                seg.innerHTML = `<span style="transform: skewY(${90 - angle}deg) rotate(${angle / 2}deg); display:block;">${w.word}</span>`;
+                wheel.appendChild(seg);
+            });
+        }
+
+        let selectedWord = null;
+
+        function spinWheel() {
+            const randIndex = Math.floor(Math.random() * words.length);
+            selectedWord = words[randIndex];
+            const degree = 3600 + randIndex * (360 / words.length);
+            wheel.style.transition = "transform 3s ease-out";
+            wheel.style.transform = `rotate(${degree}deg)`;
+            setTimeout(() => {
+                document.getElementById("resultText").innerText = `Palabra seleccionada: ${selectedWord.word}`;
+                document.getElementById("actions").style.display = "block";
+                document.getElementById("definition").innerText = "";
+            }, 3100);
+        }
+
+        function markCorrect() {
+            document.getElementById("definition").innerHTML = `<strong>Significado:</strong> ${selectedWord.definition}`;
+        }
+
+        function markIncorrect() {
+            document.getElementById("definition").innerHTML = `<strong>Significado:</strong> ${selectedWord.definition}`;
+        }
+
+        renderWheel();
+    </script>
+</body>
+</html>
